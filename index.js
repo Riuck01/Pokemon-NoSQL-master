@@ -1,7 +1,12 @@
 const express = require("express");
 const dbo = require("./db/db");
-const app = express();
+const {pokedex} = require('./tableaux-pokedex.js');
+const bodyParser = require('body-parser');
 const port = 4444;
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const jsonParser = bodyParser.json();
 
 dbo.connectToServer();
 
@@ -34,12 +39,6 @@ app.get("/pokemon/list", function (req, res) {
   */
 
 });
-
-const bodyParser = require('body-parser');
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
-const jsonParser = bodyParser.json();
 
 app.post('/pokemon/insert', jsonParser, (req, res) => {
   const body = req.body;
@@ -78,7 +77,7 @@ app.post('/pokemon/update', jsonParser, (req, res) => {
   const dbConnect = dbo.getDb();
   dbConnect
     .collection("pokemon")
-    .updateOne({name:body.prevname, type:body.prevtype},{$set:{name:body.newname, type:body.newtype}});
+    .updateOne({numero:body.prevnumero, name:body.prevname, type:body.prevtype},{$set:{numero:body.newnumero, name:body.newname, type:body.newtype}});
   res.json(body);
 });
 
@@ -114,10 +113,6 @@ app.get("/pokedex/list", function (req, res) {
 
 });
 
-const bodyParser = require('body-parser');
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
 app.post('/pokedex/insert', jsonParser, (req, res) => {
   const body = req.body;
   console.log('Got body:', body.name);
@@ -125,7 +120,7 @@ app.post('/pokedex/insert', jsonParser, (req, res) => {
   const dbConnect = dbo.getDb();
   dbConnect
     .collection("pokedex")
-    .insertOne({ name: body.name })
+    .insertMany(pokedex)
     .then(function (result, err) {
       if (err) {
         res.status(400).send("Error fetching pokemons!");
