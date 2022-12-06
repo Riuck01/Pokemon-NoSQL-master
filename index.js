@@ -73,7 +73,7 @@ app.post('/pokemon/insert', jsonParser, (req, res) => {
     const dbConnect = dbo.getDb();
     dbConnect
         .collection("pokemon")
-        .updateOne({ item "pikachu" },
+        .updateOne({'name':"pikachu"},
         {
           $set: { "types": "electrique"  },
           $currentDate: { lastModified: true }
